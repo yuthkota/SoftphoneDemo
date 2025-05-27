@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loan Collection Portal - Browser Calling</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://sdk.twilio.com/js/client/v1.13/twilio.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>📞 Loan Collection Portal</h1>
+    <h2 class="subtitle">Browser Calling System</h2>
+
+    <div class="success-banner">
+      ✅ No webhooks required! This system works with direct browser calling.
+    </div>
+
+    <div class="debug-info">
+      <strong>🔍 System Status:</strong><br />
+      Server URL: <span id="serverUrl"></span><br />
+      Connection Status: <span id="connectionStatus">Checking...</span><br />
+      Twilio Configuration: <span id="twilioStatus">Checking...</span>
+    </div>
+
+    <div id="status" class="status">Ready to make calls</div>
+
+    <div class="call-section">
+      <h3>📱 Make a Call</h3>
+      <div class="phone-input-group">
+        <div>
+          <label for="targetPhoneNumber"><strong>Phone Number to Call:</strong></label><br />
+          <input
+            type="tel"
+            id="targetPhoneNumber"
+            placeholder="Enter phone number (e.g. +1234567890)"
+          />
+          <small>The number you want to call from browser</small>
+        </div>
+
+        <div class="button-group" style="margin-top: 15px;">
+          <button id="browserCallBtn" class="call-btn">🌐 Call from Browser</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="call-history">
+      <h3>📋 Call History</h3>
+      <div id="callLogs">
+        <div class="no-calls">No calls made yet</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
