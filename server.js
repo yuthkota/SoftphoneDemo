@@ -67,20 +67,20 @@ app.post("/voice", (req, res) => {
   })
   
 
-// SIMPLIFIED: Direct call without webhooks
-app.post("/make-call", async (req, res) => {
-  // ... your existing /make-call code ...
-})
+// // SIMPLIFIED: Direct call without webhooks
+// app.post("/make-call", async (req, res) => {
+//   // ... your existing /make-call code ...
+// })
 
-// ALTERNATIVE: Conference-based calling (more advanced)
-app.post("/make-conference-call", async (req, res) => {
-  // ... your existing /make-conference-call code ...
-})
+// // ALTERNATIVE: Conference-based calling (more advanced)
+// app.post("/make-conference-call", async (req, res) => {
+//   // ... your existing /make-conference-call code ...
+// })
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-  // ... your existing /health code ...
-})
+// // Health check endpoint
+// app.get("/health", (req, res) => {
+//   // ... your existing /health code ...
+// })
 
 // Token endpoint for Twilio Client (browser calls)
 app.get("/token", (req, res) => {
