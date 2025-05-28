@@ -3,51 +3,218 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Loan Collection Portal - Browser Calling</title>
+  <title>Bank Loan Collection Portal - Softphone</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://sdk.twilio.com/js/client/v1.13/twilio.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>📞 Loan Collection Portal</h1>
-    <h2 class="subtitle">Browser Calling System</h2>
+    <header class="header">
+      <h1>🏦 Bank Loan Collection Portal</h1>
+      <h2 class="subtitle">Softphone System</h2>
+      <div class="user-info">
+        <span id="agentName">Agent: John Doe</span>
+        <span id="connectionStatus" class="status-indicator">●</span>
+      </div>
+    </header>
 
     <div class="success-banner">
-      ✅ No webhooks required! This system works with direct browser calling.
+      ✅ Secure browser calling system for loan collection
     </div>
 
-    <div class="debug-info">
-      <strong>🔍 System Status:</strong><br />
-      Server URL: <span id="serverUrl"></span><br />
-      Connection Status: <span id="connectionStatus">Checking...</span><br />
-      Twilio Configuration: <span id="twilioStatus">Checking...</span>
-    </div>
+    <div id="status" class="status">Initializing...</div>
 
-    <div id="status" class="status">Ready to make calls</div>
+    <!-- Navigation Tabs -->
+    <div class="tab-container">
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="dialer">📞 Dialer</button>
+        <button class="tab-btn" data-tab="accounts">👥 Loan Accounts</button>
+        <button class="tab-btn" data-tab="add-account">➕ Add Account</button>
+        <button class="tab-btn" data-tab="history">📋 Call History</button>
+      </div>
 
-    <div class="call-section">
-      <h3>📱 Make a Call</h3>
-      <div class="phone-input-group">
-        <div>
-          <label for="targetPhoneNumber"><strong>Phone Number to Call:</strong></label><br />
-          <input
-            type="tel"
-            id="targetPhoneNumber"
-            placeholder="Enter phone number (e.g. +1234567890)"
-          />
-          <small>The number you want to call from browser</small>
+      <!-- Dialer Tab -->
+      <div id="dialer" class="tab-content active">
+        <div class="call-section">
+          <h3>📱 Make a Call</h3>
+          <div class="phone-input-group">
+            <div class="input-container">
+              <label for="targetPhoneNumber"><strong>Phone Number:</strong></label>
+              <input
+                type="tel"
+                id="targetPhoneNumber"
+                placeholder="Enter phone number (e.g. +1234567890)"
+              />
+              <small>Enter the borrower's phone number</small>
+            </div>
+
+            <div class="call-controls">
+              <button id="browserCallBtn" class="call-btn" disabled>
+                🌐 Call Now
+              </button>
+              <button id="endCallBtn" class="end-call-btn" style="display: none;">
+                📴 End Call
+              </button>
+            </div>
+          </div>
+
+          <!-- Dial Pad -->
+          <div class="dial-pad">
+            <div class="dial-row">
+              <button class="dial-btn" data-digit="1">1</button>
+              <button class="dial-btn" data-digit="2">2<span>ABC</span></button>
+              <button class="dial-btn" data-digit="3">3<span>DEF</span></button>
+            </div>
+            <div class="dial-row">
+              <button class="dial-btn" data-digit="4">4<span>GHI</span></button>
+              <button class="dial-btn" data-digit="5">5<span>JKL</span></button>
+              <button class="dial-btn" data-digit="6">6<span>MNO</span></button>
+            </div>
+            <div class="dial-row">
+              <button class="dial-btn" data-digit="7">7<span>PQRS</span></button>
+              <button class="dial-btn" data-digit="8">8<span>TUV</span></button>
+              <button class="dial-btn" data-digit="9">9<span>WXYZ</span></button>
+            </div>
+            <div class="dial-row">
+              <button class="dial-btn" data-digit="*">*</button>
+              <button class="dial-btn" data-digit="0">0<span>+</span></button>
+              <button class="dial-btn" data-digit="#">#</button>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="button-group" style="margin-top: 15px;">
-          <button id="browserCallBtn" class="call-btn">🌐 Call from Browser</button>
+      <!-- Loan Accounts Tab -->
+      <div id="accounts" class="tab-content">
+        <div class="accounts-section">
+          <div class="accounts-header">
+            <h3>👥 Loan Accounts</h3>
+            <div class="search-container">
+              <input type="text" id="searchAccounts" placeholder="Search accounts..." />
+              <button id="searchBtn">🔍</button>
+            </div>
+          </div>
+
+          <div class="accounts-stats">
+            <div class="stat-card">
+              <span class="stat-number" id="totalAccounts">0</span>
+              <span class="stat-label">Total Accounts</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="overdueAccounts">0</span>
+              <span class="stat-label">Overdue</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="contactedToday">0</span>
+              <span class="stat-label">Contacted Today</span>
+            </div>
+          </div>
+
+          <div id="accountsList" class="accounts-list">
+            <!-- Accounts will be populated here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Account Tab -->
+      <div id="add-account" class="tab-content">
+        <div class="add-account-section">
+          <h3>➕ Add New Loan Account</h3>
+          <form id="addAccountForm" class="account-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="borrowerName">Borrower Name *</label>
+                <input type="text" id="borrowerName" required />
+              </div>
+              <div class="form-group">
+                <label for="accountNumber">Account Number *</label>
+                <input type="text" id="accountNumber" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="phoneNumber">Phone Number *</label>
+                <input type="tel" id="phoneNumber" required />
+              </div>
+              <div class="form-group">
+                <label for="alternatePhone">Alternate Phone</label>
+                <input type="tel" id="alternatePhone" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="loanAmount">Loan Amount *</label>
+                <input type="number" id="loanAmount" step="0.01" required />
+              </div>
+              <div class="form-group">
+                <label for="outstandingBalance">Outstanding Balance *</label>
+                <input type="number" id="outstandingBalance" step="0.01" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" />
+              </div>
+              <div class="form-group">
+                <label for="loanStatus">Status</label>
+                <select id="loanStatus">
+                  <option value="current">Current</option>
+                  <option value="overdue">Overdue</option>
+                  <option value="default">Default</option>
+                  <option value="settled">Settled</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="notes">Notes</label>
+              <textarea id="notes" rows="3" placeholder="Additional notes about the borrower..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="save-btn">💾 Save Account</button>
+              <button type="reset" class="reset-btn">🔄 Reset Form</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Call History Tab -->
+      <div id="history" class="tab-content">
+        <div class="history-section">
+          <div class="history-header">
+            <h3>📋 Call History</h3>
+            <button id="clearHistoryBtn" class="clear-btn">🗑️ Clear History</button>
+          </div>
+          <div id="callLogs">
+            <div class="no-calls">No calls made yet</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="call-history">
-      <h3>📋 Call History</h3>
-      <div id="callLogs">
-        <div class="no-calls">No calls made yet</div>
+    <!-- Call Modal -->
+    <div id="callModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>📞 Active Call</h3>
+          <span id="callTimer">00:00</span>
+        </div>
+        <div class="modal-body">
+          <div class="caller-info">
+            <div class="caller-name" id="callerName">Unknown</div>
+            <div class="caller-number" id="callerNumber">+1234567890</div>
+          </div>
+          <div class="call-actions">
+            <button id="muteBtn" class="action-btn">🔇 Mute</button>
+            <button id="holdBtn" class="action-btn">⏸️ Hold</button>
+            <button id="modalEndCallBtn" class="end-call-btn">📴 End Call</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
